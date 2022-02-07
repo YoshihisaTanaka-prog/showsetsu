@@ -1,0 +1,6 @@
+<header>
+    <h2>小説管理サイト</h2>
+        <% unless controller.controller_name == "tops" && controller.action_name == "index" %>
+            <%= link_to "トップへ", root_path %>
+        <% end %>
+</header>

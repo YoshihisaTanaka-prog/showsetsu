@@ -1,0 +1,27 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Synopses</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Comment</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @synopses.each do |synopsis| %>
+      <tr>
+        <td><%= synopsis.comment %></td>
+        <td><%= link_to 'Show', synopsis %></td>
+        <td><%= link_to 'Edit', edit_synopsis_path(synopsis) %></td>
+        <td><%= link_to 'Destroy', synopsis, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Synopsis', new_synopsis_path %>

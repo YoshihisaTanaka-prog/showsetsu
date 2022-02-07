@@ -1,0 +1,36 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Steps</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @steps.each_with_index do |step, index| %>
+      <tr>
+        <td>
+          <% unless index == 0 %>
+            <%= link_to '↑↑', sort_step_path(@steps[index - 1].id, step.id), method: :post %>
+          <% end %>
+        </td>
+        <td>
+          <% unless index == @steps.length - 1 %>
+            <%= link_to '↓↓', sort_step_path(@steps[index - 1].id, step.id), method: :post %>
+          <% end %>
+        </td>
+        <td><%= step.name %></td>
+        <td><%= link_to 'Edit', edit_step_path(step) %></td>
+        <td><%= link_to 'Destroy', step, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Step', new_step_path %>

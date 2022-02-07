@@ -1,0 +1,2 @@
+class Synopsis < ApplicationRecord
+end

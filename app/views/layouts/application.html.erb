@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Showsetsu</title>
+    <title>小説管理サイト</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <%= javascript_pack_tag 'tops/index', 'data-turbolinks-track': 'reload' if controller.controller_name == "tops" && controller.action_name == "index" %>
   </head>
 
   <body>
-    <%= yield %>
+    <%= render partial: "layouts/header" %>
+    <main>
+      <%= yield %>
+    </main>
+    <%= render partial: "layouts/footer" %>
   </body>
 </html>

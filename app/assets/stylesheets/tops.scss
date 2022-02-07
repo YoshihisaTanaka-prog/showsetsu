@@ -1,3 +1,26 @@
 // Place all the styles related to the tops controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
+
+#root{
+    display:  flex;
+    width: 98%;
+    margin: 2% 1% 0% 1%;
+    border: 1px solid #000;
+    box-sizing: border-box;
+}
+
+#main{
+    width: 75%;
+    height: 100%;
+    // background: #0f0;
+    padding: 1%
+}
+
+#sub{
+    width: 25%;
+    height: 100%;
+    border-left: 1px solid #000;
+    box-sizing: border-box;
+    padding: 1%
+}

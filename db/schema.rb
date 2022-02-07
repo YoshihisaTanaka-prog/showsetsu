@@ -10,7 +10,79 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_07_030317) do
+ActiveRecord::Schema.define(version: 2022_02_07_120558) do
+
+  create_table "chapter_characters", force: :cascade do |t|
+    t.integer "chapter_id", null: false
+    t.integer "character_id", null: false
+    t.integer "order"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["chapter_id"], name: "index_chapter_characters_on_chapter_id"
+    t.index ["character_id"], name: "index_chapter_characters_on_character_id"
+  end
+
+  create_table "chapter_synopses", force: :cascade do |t|
+    t.integer "chapter_id", null: false
+    t.integer "synopses_id", null: false
+    t.integer "order"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["chapter_id"], name: "index_chapter_synopses_on_chapter_id"
+    t.index ["synopses_id"], name: "index_chapter_synopses_on_synopses_id"
+  end
+
+  create_table "chapters", force: :cascade do |t|
+    t.string "title"
+    t.integer "user_id"
+    t.integer "title_id"
+    t.integer "order"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "characters", force: :cascade do |t|
+    t.string "name"
+    t.text "comment"
+    t.integer "user_id"
+    t.integer "title_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "steps", force: :cascade do |t|
+    t.string "name"
+    t.integer "user_id"
+    t.integer "order"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "stories", force: :cascade do |t|
+    t.string "title"
+    t.text "body"
+    t.integer "user_id"
+    t.integer "chapter_id"
+    t.integer "order"
+    t.integer "step_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "synopses", force: :cascade do |t|
+    t.text "comment"
+    t.integer "user_id"
+    t.integer "title_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "titles", force: :cascade do |t|
+    t.string "title"
+    t.integer "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -24,4 +96,8 @@ ActiveRecord::Schema.define(version: 2022_02_07_030317) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "chapter_characters", "chapters"
+  add_foreign_key "chapter_characters", "characters"
+  add_foreign_key "chapter_synopses", "chapters"
+  add_foreign_key "chapter_synopses", "synopses", column: "synopses_id"
 end

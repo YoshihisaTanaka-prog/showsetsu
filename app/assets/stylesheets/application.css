@@ -13,3 +13,34 @@
  *= require_tree .
  *= require_self
  */
+
+ body{
+    display: flex;
+    min-height: 100vh;
+    flex-flow: column;
+    padding: 0;
+    margin: 0;
+}
+main{
+    flex: 1;
+}
+
+header{
+    backGround: #3778ff;
+    height: 100px;
+    margin: 0;
+    width: 100%;
+}
+
+footer{
+    margin: 0;
+    backGround: #3778ff;
+    height: 50px;
+    width: 100vw;
+    bottom: 0;
+    text-align: right;
+}
+footer p{
+    padding-right: 30px;
+    padding-top: 0px;
+}
