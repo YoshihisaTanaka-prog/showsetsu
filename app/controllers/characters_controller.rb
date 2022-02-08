@@ -34,22 +34,29 @@ class CharactersController < ApplicationController
 
   # POST /characters or /characters.json
   def create
-    @character = Character.new(character_params)
-    @character.user_id = current_user.id
     respond_to do |format|
-      if @character.save
-        @character.order = @character.id
-        if @character.save
-          format.html { redirect_to root_path }
-          format.json { render :show, status: :created, location: @character }
-        else
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @character.errors, status: :unprocessable_entity }
+      format.html {
+        character = Character.new(character_params)
+        character.title_id = session[:title]
+        character.user_id =current_user.id
+        character.save_new_order
+        character.set_token
+        new_token 'character'
+        redirect_to root_path
+      }
+      format.json {
+        if params[:token] == session[:character_token]
+          character = Character.new
+          character.title_id = session[:title]
+          character.name = params[:name]
+          character.comment = params[:comment]
+          character.user_id = current_user.id
+          character.save_new_order
+          character.set_token
+          new_token 'character'
+          render json: {:id => character.id, :token => session[:character_token]}
         end
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @character.errors, status: :unprocessable_entity }
-      end
+      }
     end
   end
 

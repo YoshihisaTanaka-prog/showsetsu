@@ -5,10 +5,12 @@ class TitlesController < ApplicationController
   # GET /titles or /titles.json
   def index
     @titles = current_user.titles
+    session[:title] = ''
     respond_to do |format|
       format.html
       format.json {
-        render json: @titles
+        new_token 'title'
+        render json: {data: @titles, :token => session[:title_token]}
       }
     end
     @title = Title.new
@@ -31,25 +33,32 @@ class TitlesController < ApplicationController
 
   # POST /titles or /titles.json
   def create
-    @title = Title.new(title_params)
-    @title.user_id = current_user.id
     respond_to do |format|
-      if @title.save
-        session[:title] = @title.id
-        format.html { redirect_to root_path }
-        format.json { render :show, status: :created, location: @title }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @title.errors, status: :unprocessable_entity }
-      end
+      format.html {
+        title = Title.new(title_params)
+        title.user_id = current_user.id
+        title.set_token
+        new_token 'title'
+        session[:title] = title.id
+        redirect_to root_path
+      }
+      format.json {
+        protect_from_forgery
+        title = Title.new
+        title.title = params[:title]
+        title.user_id = current_user.id
+        title.set_token
+        render json: {id: title.id}
+      }
     end
   end
 
   # PATCH/PUT /titles/1 or /titles/1.json
   def update
+    session[:title] = @title.id
     respond_to do |format|
       if @title.update(title_params)
-        format.html { redirect_to titles_path }
+        format.html { redirect_to root_path }
         format.json { render :show, status: :ok, location: @title }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -60,10 +69,11 @@ class TitlesController < ApplicationController
 
   # DELETE /titles/1 or /titles/1.json
   def destroy
+    session[:title] = ''
     @title.destroy
 
     respond_to do |format|
-      format.html { redirect_to titles_url, notice: "Title was successfully destroyed." }
+      format.html { redirect_to root_path }
       format.json { head :no_content }
     end
   end

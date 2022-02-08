@@ -22,16 +22,29 @@ class StoriesController < ApplicationController
 
   # POST /stories or /stories.json
   def create
-    @story = Story.new(story_params)
-
     respond_to do |format|
-      if @story.save
-        format.html { redirect_to story_url(@story), notice: "Story was successfully created." }
-        format.json { render :show, status: :created, location: @story }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @story.errors, status: :unprocessable_entity }
-      end
+      format.html {
+        story = Story.new(story_params)
+        story.chapter_id = session[:chapter]
+        story.user_id = current_user.id
+        story.step_id =current_user.initial_step.id
+        story.save_new_order
+        story.set_token
+        new_token 'story'
+        redirect_to root_path
+      }
+      format.json {
+        story = Story.new
+        story.title = params[:title]
+        story.body = params[:body]
+        story.chapter_id = session[:chapter]
+        story.user_id = current_user.id
+        story.step_id =current_user.initial_step.id
+        story.save_new_order
+        story.set_token
+        new_token 'story'
+        render json: {id: step.id, :token => session[:step_token]}
+      }
     end
   end
 

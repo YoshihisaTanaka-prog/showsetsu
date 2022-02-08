@@ -34,22 +34,26 @@ class SynopsesController < ApplicationController
 
   # POST /synopses or /synopses.json
   def create
-    @synopsis = Synopsis.new(synopsis_params)
-    @synopsis.user_id = current_user.id
     respond_to do |format|
-      if @synopsis.save
-        @synopsis.order = @synopsis.id
-        if @synopsis.save
-          format.html { redirect_to root_path }
-          format.json { render :show, status: :created, location: @synopsis }
-        else
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @synopsis.errors, status: :unprocessable_entity }
-        end
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @synopsis.errors, status: :unprocessable_entity }
-      end
+      format.html {
+        synopsis = Synopsis.new(synopsis_params)
+        synopsis.user_id = current_user.id
+        synopsis.title_id = session[:title]
+        synopsis.save_new_order
+        synopsis.set_token
+        new_token 'synopsis'
+        redirect_to root_path
+      }
+      format.json {
+        synopsis = Synopsis.new
+        synopsis.comment = params[:comment]
+        synopsis.user_id = current_user.id
+        synopsis.title_id = session[:title]
+        synopsis.save_new_order
+        synopsis.set_token
+        new_token 'synopsis'
+        render json: {id: step.id, :token => session[:synopsis_token]}
+      }
     end
   end
 

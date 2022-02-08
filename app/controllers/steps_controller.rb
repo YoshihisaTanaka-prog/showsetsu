@@ -22,22 +22,24 @@ class StepsController < ApplicationController
 
   # POST /steps or /steps.json
   def create
-    @step = Step.new(step_params)
-    @step.user_id = current_user.id
     respond_to do |format|
-      if @step.save
-        @step.order = @step.id
-        if @step.save
-          format.html { redirect_to steps_path, notice: "Step was successfully created." }
-          format.json { render :show, status: :created, location: @step }
-        else
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @step.errors, status: :unprocessable_entity }
-        end
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @step.errors, status: :unprocessable_entity }
-      end
+      format.html {
+        step = Step.new(step_params)
+        step.user_id = current_user.id
+        step.save_new_order
+        step.set_token
+        new_token 'step'
+        redirect_to steps_path
+      }
+      format.json {
+        step = Step.new
+        step.name = params[:name]
+        step.user_id = current_user.id
+        step.save_new_order
+        step.set_token
+        new_token 'step'
+        render json: {id: step.id, :token => session[:step_token]}
+      }
     end
   end
 

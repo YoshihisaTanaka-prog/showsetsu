@@ -1,7 +1,7 @@
 class Title < ApplicationRecord
 
     def chapters
-        return Chapter.where(user_id: self.id).order(:order)
+        return Chapter.where(title_id: self.id).order(:order)
     end
 
     def storys

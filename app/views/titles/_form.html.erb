@@ -1,4 +1,4 @@
-<%= form_with(model: title) do |form| %>
+<%= form_with(model: title, id: 'form') do |form| %>
   <% if title.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(title.errors.count, "error") %> prohibited this title from being saved:</h2>
@@ -17,6 +17,6 @@
   </div>
 
   <div class="actions">
-    <%= form.submit %>
+    <%= form.submit id: :submit %>
   </div>
 <% end %>

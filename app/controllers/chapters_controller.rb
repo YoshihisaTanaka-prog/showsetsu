@@ -33,6 +33,7 @@ class ChaptersController < ApplicationController
   # GET /chapters/new
   def new
     @chapter = Chapter.new
+    set_new_token
   end
 
   # GET /chapters/1/edit
@@ -41,22 +42,28 @@ class ChaptersController < ApplicationController
 
   # POST /chapters or /chapters.json
   def create
-    @chapter = Chapter.new(chapter_params)
-    @chapter.user_id = current_user.id
     respond_to do |format|
-      if @chapter.save
-        @chapter.order = @chapter.id
-        if @chapter.save
-          format.html { redirect_to root_path }
-          format.json { render :show, status: :created, location: @chapter }
-        else
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @chapter.errors, status: :unprocessable_entity }
+      format.html {
+        chapter = Chapter.new(chapter_params)
+        chapter.title_id = session[:title]
+        chapter.user_id = current_user.id
+        chapter.save_new_order
+        chapter.set_token
+        new_token 'chapter'
+        redirect_to root_path
+      }
+      format.json {
+        if params[:token] == session[:chapter_token]
+          chapter = Chapter.new
+          chapter.title = params[:title_id]
+          chapter.title_id = session[:title]
+          chapter.user_id = current_user.id
+          chapter.save_new_order
+          chapter.set_token
+          new_token 'chapter'
+          render json: {:id => chapter.id, :token => session[:chapter_token]}
         end
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @chapter.errors, status: :unprocessable_entity }
-      end
+      }
     end
   end
 
