@@ -6,10 +6,10 @@ class SynopsesController < ApplicationController
   def index
     respond_to do |format|
       format.html {
-        if session[:title].blank?
+        if current_user.title.blank?
           redirect_to root_path
         else
-          @synopses = Synopsis.where(user_id: current_user.id, title_id: session[:title]).order(:order)
+          @synopses = Synopsis.where(user_id: current_user.id, title_id: current_user.title).order(:order)
         end
       }
       format.json {
@@ -35,25 +35,12 @@ class SynopsesController < ApplicationController
   # POST /synopses or /synopses.json
   def create
     respond_to do |format|
-      format.html {
-        synopsis = Synopsis.new(synopsis_params)
-        synopsis.user_id = current_user.id
-        synopsis.title_id = session[:title]
-        synopsis.save_new_order
-        synopsis.set_token
-        new_token 'synopsis'
-        redirect_to root_path
-      }
-      format.json {
-        synopsis = Synopsis.new
-        synopsis.comment = params[:comment]
-        synopsis.user_id = current_user.id
-        synopsis.title_id = session[:title]
-        synopsis.save_new_order
-        synopsis.set_token
-        new_token 'synopsis'
-        render json: {id: step.id, :token => session[:synopsis_token]}
-      }
+      synopsis = Synopsis.new(synopsis_params)
+      synopsis.user_id = current_user.id
+      synopsis.title_id = current_user.:title
+      synopsis.save_new_order
+      format.html { redirect_to root_path }
+      format.json { render json: synopsis.render_json }
     end
   end
 
@@ -62,7 +49,7 @@ class SynopsesController < ApplicationController
     respond_to do |format|
       if @synopsis.update(synopsis_params)
         format.html { redirect_to root_path }
-        format.json { render :show, status: :ok, location: @synopsis }
+        format.json { render json: @synopsis.render_json }
       else
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @synopsis.errors, status: :unprocessable_entity }

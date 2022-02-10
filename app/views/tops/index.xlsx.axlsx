@@ -1,0 +1,20 @@
+wb = xlsx_package.workbook
+@tables.each do |table|
+    model = table.new
+    wb.add_worksheet(name: model.class.name) do |sheet|
+        column_row = []
+        table.column_names.each do |column|
+            unless ["created_at", "updated_at"].include?(column)
+                column_row.push(column)
+            end
+        end
+        sheet.add_row(column_row)
+        table.all.each do |data|
+            data_row = []
+            column_row.each do |column|
+                data_row.push data[column.to_sym]
+            end
+            sheet.add_row(data_row)
+        end
+    end
+end

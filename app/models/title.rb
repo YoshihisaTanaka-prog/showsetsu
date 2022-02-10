@@ -14,4 +14,13 @@ class Title < ApplicationRecord
         return ret
     end
 
+    def set_story_num
+        sum = 1
+        self.chapters.each do |chapter|
+            chapter.first_story_num = sum
+            chapter.save
+            sum = sum + chapter.stories.length
+        end
+    end
+
 end

@@ -10,5 +10,6 @@ Rails.application.routes.draw do
 
   post 'sort-step/:iid/:jid', to: 'steps#sort', as: 'sort_step'
 
+  post 'fetch-work-session', to: 'tops#fetch_work_session'
   root 'tops#index'
 end

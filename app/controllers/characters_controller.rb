@@ -6,15 +6,15 @@ class CharactersController < ApplicationController
   def index
     respond_to do |format|
       format.html {
-        if session[:title].blank?
+        if current_user.title.blank?
           redirect_to root_path
         else
-          @characters = Character.where(user_id: current_user.id, title_id: session[:title]).order(:order)
+          @characters = Character.where(user_id: current_user.id, title_id: current_user.title).order(:order)
         end
       }
       format.json {
         chapter = Chapter.find(params[:chapter_id])
-        render :json => chapter.characters
+        render :json => {title: chapter.title_data, chapter: chapter, stories: chapter.stories}
       }
     end
   end
@@ -35,28 +35,12 @@ class CharactersController < ApplicationController
   # POST /characters or /characters.json
   def create
     respond_to do |format|
-      format.html {
-        character = Character.new(character_params)
-        character.title_id = session[:title]
-        character.user_id =current_user.id
-        character.save_new_order
-        character.set_token
-        new_token 'character'
-        redirect_to root_path
-      }
-      format.json {
-        if params[:token] == session[:character_token]
-          character = Character.new
-          character.title_id = session[:title]
-          character.name = params[:name]
-          character.comment = params[:comment]
-          character.user_id = current_user.id
-          character.save_new_order
-          character.set_token
-          new_token 'character'
-          render json: {:id => character.id, :token => session[:character_token]}
-        end
-      }
+      character = Character.new(character_params)
+      character.title_id = current_user.title
+      character.user_id = current_user.id
+      character.save_new_order
+      format.html { redirect_to root_path }
+      format.json { render json: character.render_json }
     end
   end
 
@@ -65,10 +49,10 @@ class CharactersController < ApplicationController
     respond_to do |format|
       if @character.update(character_params)
         format.html { redirect_to root_path }
-        format.json { render :show, status: :ok, location: @character }
+        format.json { render jsoncharacter.render_json }
       else
         format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @character.errors, status: :unprocessable_entity }
+        format.json { render json: character.errors, status: :unprocessable_entity }
       end
     end
   end

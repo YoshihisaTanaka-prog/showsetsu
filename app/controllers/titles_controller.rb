@@ -5,12 +5,11 @@ class TitlesController < ApplicationController
   # GET /titles or /titles.json
   def index
     @titles = current_user.titles
-    session[:title] = ''
     respond_to do |format|
       format.html
       format.json {
         new_token 'title'
-        render json: {data: @titles, :token => session[:title_token]}
+        render json: {data: @titles}
       }
     end
     @title = Title.new
@@ -18,7 +17,6 @@ class TitlesController < ApplicationController
 
   # GET /titles/1 or /titles/1.json
   def show
-    session[:title] = @title.id
     redirect_to chapters_path
   end
 
@@ -33,33 +31,24 @@ class TitlesController < ApplicationController
 
   # POST /titles or /titles.json
   def create
+    logger.debug params
+    logger.debug request.url
+    title = Title.new(title_params)
+    title.user_id = current_user.id
+    title.save
     respond_to do |format|
-      format.html {
-        title = Title.new(title_params)
-        title.user_id = current_user.id
-        title.set_token
-        new_token 'title'
-        session[:title] = title.id
-        redirect_to root_path
-      }
-      format.json {
-        protect_from_forgery
-        title = Title.new
-        title.title = params[:title]
-        title.user_id = current_user.id
-        title.set_token
-        render json: {id: title.id}
-      }
+      format.html { redirect_to root_path }
+      format.json { render json: title.render_json }
     end
   end
 
   # PATCH/PUT /titles/1 or /titles/1.json
   def update
-    session[:title] = @title.id
+    logger.debug title_params
     respond_to do |format|
       if @title.update(title_params)
         format.html { redirect_to root_path }
-        format.json { render :show, status: :ok, location: @title }
+        format.json { render json: @title.render_json }
       else
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @title.errors, status: :unprocessable_entity }
@@ -69,7 +58,6 @@ class TitlesController < ApplicationController
 
   # DELETE /titles/1 or /titles/1.json
   def destroy
-    session[:title] = ''
     @title.destroy
 
     respond_to do |format|
@@ -81,10 +69,7 @@ class TitlesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_title
-      @title = Title.find(params[:id])
-      unless @title.user_id == current_user.id
-        redirect_to titles_path
-      end
+      @title = Title.find_by(id: params[:id], user_id: current_user.id)
     end
 
     # Only allow a list of trusted parameters through.

@@ -12,16 +12,16 @@ class User < ApplicationRecord
     return Title.where(user_id: self.id)
   end
 
-  def steps
-    return Step.where(user_id: self.id).order(:order)
-  end
-
   def initial_step
     if self.steps.blank?
       return nil
     else
       return self.steps.first
     end
+  end
+
+  def session_hash
+    return {title: self.title, chapter: self.chapter, story: self.story, synopsis: self.synopsis, character: self.character, design: self.design}
   end
 
 end

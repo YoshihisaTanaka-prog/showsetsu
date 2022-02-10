@@ -5,6 +5,7 @@ class CreateChapters < ActiveRecord::Migration[6.1]
       t.integer :user_id
       t.integer :title_id
       t.integer :order
+      t.integer :first_story_num
 
       t.timestamps
     end

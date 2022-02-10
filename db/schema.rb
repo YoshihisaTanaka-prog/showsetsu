@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_07_120558) do
+ActiveRecord::Schema.define(version: 2022_02_10_030526) do
 
   create_table "chapter_characters", force: :cascade do |t|
     t.integer "chapter_id", null: false
     t.integer "character_id", null: false
     t.integer "order"
+    t.boolean "is_effective"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["chapter_id"], name: "index_chapter_characters_on_chapter_id"
@@ -26,6 +27,7 @@ ActiveRecord::Schema.define(version: 2022_02_07_120558) do
     t.integer "chapter_id", null: false
     t.integer "synopses_id", null: false
     t.integer "order"
+    t.boolean "is_effective"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["chapter_id"], name: "index_chapter_synopses_on_chapter_id"
@@ -37,6 +39,7 @@ ActiveRecord::Schema.define(version: 2022_02_07_120558) do
     t.integer "user_id"
     t.integer "title_id"
     t.integer "order"
+    t.integer "first_story_num"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -92,6 +95,12 @@ ActiveRecord::Schema.define(version: 2022_02_07_120558) do
     t.datetime "remember_created_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "title"
+    t.integer "chapter"
+    t.integer "story"
+    t.integer "synopsis"
+    t.integer "character"
+    t.integer "design"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

@@ -22,28 +22,18 @@ class StoriesController < ApplicationController
 
   # POST /stories or /stories.json
   def create
+    story = Story.new(story_params)
+    story.chapter_id = current_user.chapter
+    story.user_id = current_user.id
+    story.step_id =current_user.initial_step.id
+    story.save_new_order
+    story.title_data.set_story_num
     respond_to do |format|
       format.html {
-        story = Story.new(story_params)
-        story.chapter_id = session[:chapter]
-        story.user_id = current_user.id
-        story.step_id =current_user.initial_step.id
-        story.save_new_order
-        story.set_token
-        new_token 'story'
         redirect_to root_path
       }
       format.json {
-        story = Story.new
-        story.title = params[:title]
-        story.body = params[:body]
-        story.chapter_id = session[:chapter]
-        story.user_id = current_user.id
-        story.step_id =current_user.initial_step.id
-        story.save_new_order
-        story.set_token
-        new_token 'story'
-        render json: {id: step.id, :token => session[:step_token]}
+        render json: story.render_json
       }
     end
   end
@@ -53,7 +43,7 @@ class StoriesController < ApplicationController
     respond_to do |format|
       if @story.update(story_params)
         format.html { redirect_to story_url(@story), notice: "Story was successfully updated." }
-        format.json { render :show, status: :ok, location: @story }
+        format.json { render json: @story.render_json }
       else
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @story.errors, status: :unprocessable_entity }
@@ -63,8 +53,9 @@ class StoriesController < ApplicationController
 
   # DELETE /stories/1 or /stories/1.json
   def destroy
+    title = @story.title_data
     @story.destroy
-
+    title.set_story_num
     respond_to do |format|
       format.html { redirect_to stories_url, notice: "Story was successfully destroyed." }
       format.json { head :no_content }
