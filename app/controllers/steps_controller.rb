@@ -1,4 +1,5 @@
 class StepsController < ApplicationController
+  # before_action :confirm_user_token
   before_action :authenticate_user!
   before_action :set_step, only: %i[ show edit update destroy ]
 
@@ -72,9 +73,9 @@ class StepsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_step
-      @step = Step.find(params[:id])
-      unless @step.user_id == current_user.id
-        redirect_to root_path
+      @step = Step.find_by(id: params[:id], user_id: current_user.id)
+      if @step.blank?
+        redirect_to no_page_path
       end
     end
 

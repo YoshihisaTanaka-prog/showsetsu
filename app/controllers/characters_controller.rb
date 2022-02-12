@@ -1,5 +1,5 @@
 class CharactersController < ApplicationController
-  before_action :authenticate_user!
+  before_action :confirm_user_token
   before_action :set_character, only: %i[ show edit update destroy ]
 
   # GET /characters or /characters.json
@@ -70,9 +70,9 @@ class CharactersController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_character
-      @character = Character.find(params[:id])
-      unless @character.user_id == current_user.id
-        redirect_to root_path
+      @character = Character.find_by(id: params[:id], user_id: current_user.id)
+      if @character.blank?
+        redirect_to no_page_path
       end
     end
 

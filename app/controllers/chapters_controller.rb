@@ -1,5 +1,5 @@
 class ChaptersController < ApplicationController
-  before_action :authenticate_user!
+  before_action :confirm_user_token
   before_action :set_chapter, only: %i[ show edit update destroy ]
 
   # GET /chapters or /chapters.json
@@ -88,6 +88,9 @@ class ChaptersController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_chapter
       @chapter = Chapter.find_by(id: params[:id], user_id: current_user.id)
+      if @chapter.blank?
+        redirect_to no_page_path
+      end
     end
 
     # Only allow a list of trusted parameters through.

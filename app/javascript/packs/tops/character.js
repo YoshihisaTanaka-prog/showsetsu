@@ -1,0 +1,1 @@
+tObj.setCharacter = function(){}

@@ -1,5 +1,5 @@
 class SynopsesController < ApplicationController
-  before_action :authenticate_user!
+  before_action :confirm_user_token
   before_action :set_synopsis, only: %i[ show edit update destroy ]
 
   # GET /synopses or /synopses.json
@@ -37,7 +37,7 @@ class SynopsesController < ApplicationController
     respond_to do |format|
       synopsis = Synopsis.new(synopsis_params)
       synopsis.user_id = current_user.id
-      synopsis.title_id = current_user.:title
+      synopsis.title_id = current_user.title
       synopsis.save_new_order
       format.html { redirect_to root_path }
       format.json { render json: synopsis.render_json }
@@ -70,9 +70,9 @@ class SynopsesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_synopsis
-      @synopsis = Synopsis.find(params[:id])
-      unless @synopsis.user_id == current_user.id
-        redirect_to root_path
+      @synopsis = Synopsis.find_by(id: params[:id], user_id: current_user.id)
+      if @synopsis.blank?
+        redirect_to no_page_path
       end
     end
 

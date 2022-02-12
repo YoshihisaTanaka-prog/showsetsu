@@ -1,5 +1,5 @@
 class TitlesController < ApplicationController
-  before_action :authenticate_user!
+  before_action :confirm_user_token
   before_action :set_title, only: %i[ show edit update destroy ]
 
   # GET /titles or /titles.json
@@ -8,7 +8,6 @@ class TitlesController < ApplicationController
     respond_to do |format|
       format.html
       format.json {
-        new_token 'title'
         render json: {data: @titles}
       }
     end
@@ -70,6 +69,9 @@ class TitlesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_title
       @title = Title.find_by(id: params[:id], user_id: current_user.id)
+      if @title.blank?
+        redirect_to no_page_path
+      end
     end
 
     # Only allow a list of trusted parameters through.

@@ -1,5 +1,5 @@
 class StoriesController < ApplicationController
-  before_action :authenticate_user!
+  before_action :confirm_user_token
   before_action :set_story, only: %i[ show edit update destroy ]
 
   # GET /stories or /stories.json
@@ -65,9 +65,9 @@ class StoriesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_story
-      @story = Story.find(params[:id])
-      unless @story.user_id == current_user.id
-        redirect_to stories_path
+      @story = Story.find_by(id: params[:id], user_id: current_user.id)
+      if @story.blank?
+        redirect_to no_page_path
       end
     end
 

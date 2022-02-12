@@ -7,23 +7,33 @@
     <%= csp_meta_tag %>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <% if controller.controller_name == "tops" && controller.action_name == "index" && user_signed_in? %>
-      <%= include_gon %>
-      <script>
-        window.topsObject = {};
-      </script>
+    <%= include_gon %>
+    <script>
+      window.tObj = {};
+      tObj.log = {};
+      tObj.log.sessionKeyArray = {};
+    </script>
+    <%# if controller.controller_name == "tops" && controller.action_name == "index" && user_signed_in? %>
+      <%# stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+      <%# javascript_pack_tag 'tops/application' %>
+    <%# else %>
       <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-      <%= javascript_pack_tag 'tops/application' %>
-    <% elsif !user_signed_in? %>
-      <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-      <%# javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
-    <% end %>
+      <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%# end %>
   </head>
 
   <body>
-    <%= render partial: "layouts/header" %>
+    
+    <% if user_signed_in? %>
+      <%= render partial: "layouts/header" %>
+    <% else %>
+      <%= render partial: "layouts/sign_in_up_header"%>
+    <% end %>
     <main id='body-main'>
-      <%= yield %>
+      <%= yield %><br>
+      <%= controller.controller_name + ' ' + controller.action_name %><br>
+      <%= params %><br><%= session.to_hash %><br>
+      <%= link_to 'deviseのソースコード', 'https://github.com/heartcombo/devise/tree/main/app/controllers/devise' %>
     </main>
     <%= render partial: "layouts/footer" %>
   </body>
