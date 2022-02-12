@@ -1,11 +1,13 @@
 window.onload = function(){
     tObj.initialFetchSession(gon);
+    console.log('aaaaa');
     let titleId = tObj.log.title;
     if (titleId == null || titleId.length == 0) {
-        tObj.setInitialMain();
+        // tObj.setInitialMain();
     } else {
-        tObj.selectedTitle(titleId);
+        // tObj.selectedTitle(titleId);
     }
+    console.log("cookie >> ", document.cookie.length);
 }
 
 tObj.restSize = function(){

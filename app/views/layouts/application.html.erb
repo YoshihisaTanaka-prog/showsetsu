@@ -13,13 +13,13 @@
       tObj.log = {};
       tObj.log.sessionKeyArray = {};
     </script>
-    <%# if controller.controller_name == "tops" && controller.action_name == "index" && user_signed_in? %>
-      <%# stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-      <%# javascript_pack_tag 'tops/application' %>
-    <%# else %>
+    <% if controller.controller_name == "tops" && controller.action_name == "index" && user_signed_in? %>
+      <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+      <%= javascript_pack_tag 'tops/application' %>
+    <% else %>
       <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
       <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
-    <%# end %>
+    <% end %>
   </head>
 
   <body>
