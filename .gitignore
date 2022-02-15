@@ -42,3 +42,5 @@ yarn-debug.log*
 .env
 Gemfile.lock
 /bin
+.ruby-version
+.DS_Store
