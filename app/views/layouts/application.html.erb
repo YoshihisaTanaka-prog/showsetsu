@@ -9,13 +9,22 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <%= include_gon %>
     <script>
-      window.tObj = {};
-      tObj.log = {};
-      tObj.log.sessionKeyArray = {};
+      window.tObj = function(...args){
+        if (args != undefined){
+          for(let clss of args) {
+            const inst = new clss();
+            for(const funcName of Object.getOwnPropertyNames(clss.prototype)){
+              if (funcName != 'constructor') {
+                tObj[funcName] = inst[funcName];
+              };
+            }
+          }
+        }
+      }
     </script>
     <% if controller.controller_name == "tops" && controller.action_name == "index" && user_signed_in? %>
       <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-      <%= javascript_pack_tag 'tops/application' %>
+      <%= javascript_pack_tag 'edit_mode/application' %>
     <% else %>
       <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
       <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
