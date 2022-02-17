@@ -20,12 +20,12 @@
         </td>
         <td>
           <% unless index == @steps.length - 1 %>
-            <%= link_to '↓↓', sort_step_path(@steps[index - 1].id, step.id), method: :post %>
+            <%= link_to '↓↓', sort_step_path(@steps[index + 1].id, step.id), method: :post %>
           <% end %>
         </td>
         <td><%= step.name %></td>
-        <td><%= link_to 'Edit', edit_step_path(step), class: 'edit-step', id: step.id %></td>
-        <td><%= link_to 'Destroy', step, class: 'delete-step', id: step.id, method: :delete, format: :json, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Edit', '#', class: 'edit-step', id: step.id %></td>
+        <td><%= link_to 'Destroy', '#', class: 'delete-step', id: step.id %></td>
       </tr>
     <% end %>
   </tbody>

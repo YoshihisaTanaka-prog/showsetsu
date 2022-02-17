@@ -17,8 +17,7 @@ Rails.application.routes.draw do
     post models + '/new',                to: models + '#new',     as: 'new_' + model
     post models + '/:id/edit',           to: models + '#edit',    as: 'edit_' + model
     post models + '/:id/show',                to: models + '#show',    as: model
-    patch models + '/:id',               to: models + '#update'
-    put models + '/:id',                 to: models + '#update'
+    patch models + '/:id/update',               to: models + '#update'
     delete models + '/:id/delete',              to: models + '#destroy'
     post 'sort-' + model + '/:iid/:jid', to: models + '#sort',    as: 'sort_' + model
   end

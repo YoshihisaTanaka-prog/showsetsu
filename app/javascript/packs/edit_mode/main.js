@@ -46,7 +46,7 @@ export default class Main {
     initialFetchSession(sessionInfo){
         tObj.log.sessionKeyArray = sessionInfo.session_keys
         tObj.setSessionInfo(sessionInfo.session_info)
-        tObj.loadHtmlCode();
+        tObj.loadHtmlCode({});
     }
 
     mixObject(...args){
@@ -57,19 +57,18 @@ export default class Main {
         return ret;
     }
 
-    loadHtmlCode(params = {}, sessionInfo = {}, afterFunc){
+    loadHtmlCode({params: params = {}, sessionInfo: sessionInfo = {}, afterFunc: afterFunc = function(){}}){
         tObj.fetchSession(sessionInfo, function(data1){
             console.log(data1);
             $.post('/tops.json', tObj.mixObject(data1, params), function(data2){
                 const order = data2.order;
                 const code = data2.code;
+                const session = data2.session;
+                tObj.setSessionInfo(session);
                 console.log(code);
                 for (var key of order){
                     $('#' + key).html(code[key]);
                 }
-                $('#set-step').on('click', function(){
-                    tObj.loadHtmlCode({},{step: -1});
-                });
                 if (data1.step != null) {
                     tObj.setStepAction();
                 } else {
@@ -82,42 +81,61 @@ export default class Main {
         });
     }
 
-    createEdit(url, func, mainId = 'main', formId = 'form') {
-        $.post(url + '.html', {token: tObj.log.token},
-            function (data){
-                // // console.log(data); //たまに使うので残しておく
-                // $('#sub').height('');
-                // $('#root').height('');
-                $('#' + mainId).html(data);
-                const form = document.getElementById(formId);
-                form.addEventListener('submit', function(event){
-                    event.preventDefault();
-                    const formData  = new FormData(form);
-                    var formObject = {};
-                    formData.forEach(function(value, key){
-                        formObject[key] = value;
-                    });
-                    formObject.token = tObj.log.token
-                    $.post($('#' + formId).attr('action') + '.json', formObject,
-                        function(data){
-                            switch (data.type){
-                                case 'title':
-                                    tObj.selectedTitle(data.id);
-                                case 'chapter':
-                                    tObj.setChapter(data.id);
-                                case 'story':
-                                    tObj.setStory(data.id);
+    createEdit({url: url, afterLoadedFunc: afterLoadedFunc = function(){}, afetrTappedFunc: afetrTappedFunc = function(){}, mainId: mainId = 'main', formId: formId = 'form', sessionInfo: sessionInfo = {}}) {
+        tObj.fetchSession(sessionInfo, function(){
+            $.post('/tops.json', {uri: url, key: mainId},
+                function (data){
+                    const dataObject = JSON.parse(data);
+                    console.log(dataObject); //たまに使うので残しておく
+                    const order = dataObject.order;
+                    const code = dataObject.code;
+                    const session = data.session;
+                    tObj.setSessionInfo(session);
+                    for (var key of order){
+                        $('#' + key).html(code[key]);
+                    }
+                    const form = document.getElementById(formId);
+                    form.addEventListener('submit', function(event){
+                        event.preventDefault();
+                        const formData  = new FormData(form);
+                        var formObject = {};
+                        formData.forEach(function(value, key){
+                            if (key != '_method') {
+                                formObject[key] = value;
                             }
-                        },
-                        'json'
-                    );
-                });
-                if (func != null){
-                    func();
-                }
-                tObj.restSize();
-            },
-            'html'
-        );
+                        });
+                        const modelsName = ($('#' + formId).attr('action')).split('/')[1];
+                        var modelName = '';
+                        switch (modelsName) {
+                            case 'steps':
+                                modelName = 'step';
+                                break;
+                            default:
+                                break;
+                        }
+                        const parameters = tObj.mixObject({uri: modelName, key: mainId}, formObject);
+                        console.log(parameters);
+                        $.post('/tops.json', parameters,
+                            function(data){
+                                // const result = JSON.parse(data);
+                                const order = data.order;
+                                const code = data.code;
+                                const session = data.session;
+                                tObj.setSessionInfo(session);
+                                console.log(data);
+                                for (var key of order){
+                                    $('#' + key).html(code[key]);
+                                }
+                                afetrTappedFunc();
+                            },
+                            'json'
+                        );
+                    });
+                    afterLoadedFunc();
+                    tObj.restSize();
+                },
+                'html'
+            );
+        });
     }
 }

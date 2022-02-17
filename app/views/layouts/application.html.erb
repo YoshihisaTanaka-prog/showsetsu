@@ -21,12 +21,7 @@
   </head>
 
   <body>
-    
-    <% if user_signed_in? %>
-      <%= render partial: "layouts/header" %>
-    <% else %>
-      <%= render partial: "layouts/sign_in_up_header"%>
-    <% end %>
+    <%= render partial: "layouts/header" %>
     <main id='body-main'>
       <%= yield %><br>
       <%= controller.controller_name + ' ' + controller.action_name %><br>

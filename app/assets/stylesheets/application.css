@@ -44,3 +44,15 @@ footer p{
     padding-right: 30px;
     padding-top: 0px;
 }
+
+#header-ul {
+    width: 100%;
+    text-align: right;
+    padding-right: 10px;
+}
+#header-ul li{
+    float: left;
+    list-style: none;
+    padding: 0 10px;
+    border-left: #000 1px solid;
+}

@@ -1,6 +1,5 @@
 <% if user_signed_in? %>
-    <%= link_to 'excel', root_path(format: :xlsx) %><br>
-    <%= link_to 'ログアウト', destroy_user_session_path, method: :delete %><br><br>
+    <%= link_to 'excel', root_path(format: :xlsx) %><br><br><br>
     <table>
         <tr>
             <td><%= link_to 'stepの設定', steps_path, id: 'set-step' %></td>

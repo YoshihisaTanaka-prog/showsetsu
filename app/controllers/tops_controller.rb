@@ -31,9 +31,12 @@ class TopsController < ApplicationController
   def sub_method
     upk_list = []
     if user_signed_in?
-      render json: edit_code(get_next_url_list)
+      ret = edit_code(get_next_url_list)
+      user = User.find_by(id: current_user.id)
+      ret['session'] = user.session_hash
     else
     end
+    render json: ret.to_json
   end
 
   def index
@@ -114,7 +117,28 @@ class TopsController < ApplicationController
     params.each do |key, value|
       logger.debug key + ' >> ' + value.to_s
     end
-    if params[:step].present?
+    if params[:uri].present?
+      if params[:uri].include?('/')
+        return [{uri: params[:uri], params: {}, key: params[:key]}]
+      else
+        main_parameter = {authenticity_token: params[:authenticity_token]}
+        model_name = params[:uri].to_s
+        num = 3
+        string_parameter_list = params[params[:uri]].to_s.split('"')
+        while num < string_parameter_list.length
+          main_parameter[model_name + '[' + (string_parameter_list[num-2]) + ']'] = string_parameter_list[num]
+          num = num + 4
+        end
+       if current_user[params[:uri]].nil?
+        return [{uri: params[:uri].pluralize, params: main_parameter, key: params[:key]}]
+       elsif current_user[params[:uri]] < 1
+        return [{uri: params[:uri].pluralize, params: main_parameter, key: params[:key]}]
+       else
+        main_parameter['_method'] = 'PATCH'
+        return [{uri: params[:uri].pluralize + '/' + current_user[params[:uri]].to_s + '/update', params: main_parameter, key: params[:key]}]
+       end
+      end
+    elsif params[:step].present?
       if params[:step].to_i == -1
         return [{uri: 'steps/index', params: {controller: 'steps', action: 'index'}, key: 'body-main'}]
       elsif params[:step].to_i == 0

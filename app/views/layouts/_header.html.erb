@@ -1,6 +1,14 @@
 <header>
     <h2>小説管理サイト</h2>
-        <% unless controller.controller_name == "tops" && controller.action_name == "index" %>
-            <%= link_to "トップへ", root_path %>
+    <ul id='header-ul'>
+        <% if user_signed_in? %>
+            <li>モードの切り替え</li>
+            <li><%= link_to 'ログアウト', destroy_user_session_path, method: :delete %></li>
+        <% else %>
+            <li><%= link_to 'サインイン', '/users/sign_in' %></li>
         <% end %>
+        <% unless controller.controller_name == "tops" && controller.action_name == "index" %>
+            <li><%= link_to "トップへ", root_path %></li>
+        <% end %>
+    </ul>
 </header>

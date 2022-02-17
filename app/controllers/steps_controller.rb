@@ -20,39 +20,35 @@ class StepsController < ApplicationController
 
   # GET /steps/1/edit
   def edit
+    @user.step = params[:id]
+    @user.save
   end
 
   # POST /steps or /steps.json
   def create
     logger.debug params
     step = Step.new(step_params)
-    step.user_id = 1
+    step.user_id = params[:user_id]
     step.save_new_order
-    # respond_to do |format|
-    #   format.json { render html: }
-    # end
+    index
+    render action: 'index'
   end
 
   # PATCH/PUT /steps/1 or /steps/1.json
   def update
-    respond_to do |format|
-      if @step.update(step_params)
-        format.html { redirect_to steps_path, notice: "Step was successfully updated." }
-        format.json { render json: @step.render_json }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @step.errors, status: :unprocessable_entity }
-      end
+    if @step.update(step_params)
+      index
+      @user.step = -1
+      @user.save
+      render action: 'index'
     end
   end
 
   # DELETE /steps/1 or /steps/1.json
   def destroy
     @step.destroy
-
-    respond_to do |format|
-      format.json { render json: {} }
-    end
+    index
+    render action: 'index'
   end
 
   def sort
@@ -75,9 +71,12 @@ class StepsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_step
       # @step = Step.find_by(id: params[:id], user_id: current_user.id)
-      @step = Step.find_by(id: params[:id])
-      if @step.blank?
-        redirect_to no_page_path
+      @user = User.find_by_id(params[:user_id])
+      unless @user.nil?
+        @step = Step.find_by(id: params[:id], user_id: @user.id)
+        if @step.blank?
+          redirect_to no_page_path
+        end
       end
     end
 

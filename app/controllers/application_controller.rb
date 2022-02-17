@@ -47,7 +47,11 @@ class ApplicationController < ActionController::Base
         code_hash = {}
         upk_list.each do |upk|
             uri = URI.parse(root_url + upk[:uri])
-            parameters = upk[:params].merge({user_id: current_user.id})
+            if upk[:uri].include?('/delete')
+                parameters = upk[:params].merge({user_id: current_user.id, _method: 'DELETE'})
+            else
+                parameters = upk[:params].merge({user_id: current_user.id})
+            end
             # parameters = upk[:params].merge({session_id: session[:session_id], authentication_token: params[:token]})
             # logger.debug parameters
             res = Net::HTTP.post_form(uri, parameters)
