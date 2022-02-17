@@ -37,6 +37,7 @@ class DeviseCreateUsers < ActiveRecord::Migration[6.1]
       t.integer :synopsis
       t.integer :character
       t.integer :design
+      t.integer :step
       t.string  :token
       t.string  :name
       t.boolean :admin, null: false, default: false

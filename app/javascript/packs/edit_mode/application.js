@@ -11,22 +11,23 @@ import Story from './story.js'
 import Synopsis from './synopsis.js'
 import Title from './title.js'
 
-tObj.log = {};
-tObj.log.sessionKeyArray = {};
-tObj(Main, Chapter, Character, Step, Story, Synopsis, Title);
-
 Rails.start()
 ActiveStorage.start()
 
-console.log(ActiveStorage);
+tObj = function(...args){
+    for(let clss of args) {
+        const inst = new clss();
+        for(const funcName of Object.getOwnPropertyNames(clss.prototype)){
+            if (funcName != 'constructor') {
+                tObj[funcName] = inst[funcName];
+            };
+        }
+    }
+    tObj.log = {};
+    tObj.log.sessionKeyArray = {};
+}
+tObj(Main, Chapter, Character, Step, Story, Synopsis, Title);
 
 window.onload = function(){
     tObj.initialFetchSession(gon);
-    console.log('aaaaa');
-    let titleId = tObj.log.title;
-    if (titleId == null || titleId.length == 0) {
-        tObj.setInitialMain();
-    } else {
-        tObj.selectedTitle(titleId);
-    }
 }

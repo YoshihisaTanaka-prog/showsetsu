@@ -1,0 +1,2 @@
+class Sessiontoken < ApplicationRecord
+end

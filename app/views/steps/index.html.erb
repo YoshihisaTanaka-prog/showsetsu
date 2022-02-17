@@ -24,8 +24,8 @@
           <% end %>
         </td>
         <td><%= step.name %></td>
-        <td><%= link_to 'Edit', edit_step_path(step) %></td>
-        <td><%= link_to 'Destroy', step, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Edit', edit_step_path(step), class: 'edit-step', id: step.id %></td>
+        <td><%= link_to 'Destroy', step, class: 'delete-step', id: step.id, method: :delete, format: :json, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -33,4 +33,4 @@
 
 <br>
 
-<%= link_to 'New Step', new_step_path %>
+<%= link_to 'New Step', '#', class: 'new-step' %>

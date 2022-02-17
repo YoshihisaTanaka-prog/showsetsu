@@ -3,22 +3,8 @@
     <%= link_to 'ログアウト', destroy_user_session_path, method: :delete %><br><br>
     <table>
         <tr>
-            <td><%= link_to 'stepの設定', steps_path %></td>
+            <td><%= link_to 'stepの設定', steps_path, id: 'set-step' %></td>
         </tr>
     </table>
-    <% if current_user.initial_step.blank? %>
-        <center><h1>stepの設定をしてください。</h1></center>
-    <% else %>
-        <div id="root">
-            <div id="main"></div>
-            <div id='sub'>
-                <div id='position'>
-                </div>
-                <div id='story-memo'>
-                </div>
-                <div id='character-memo'>
-                </div>
-            </div>
-        </div>
-    <% end %>
+    <%= render @mode %>
 <% end %>

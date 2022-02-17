@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_07_120558) do
+ActiveRecord::Schema.define(version: 2022_02_16_035638) do
 
   create_table "chapter_characters", force: :cascade do |t|
     t.integer "chapter_id", null: false
@@ -49,6 +49,13 @@ ActiveRecord::Schema.define(version: 2022_02_07_120558) do
     t.text "comment"
     t.integer "user_id"
     t.integer "title_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "sessiontokens", force: :cascade do |t|
+    t.string "session_id"
+    t.string "token"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -99,6 +106,7 @@ ActiveRecord::Schema.define(version: 2022_02_07_120558) do
     t.integer "synopsis"
     t.integer "character"
     t.integer "design"
+    t.integer "step"
     t.string "token"
     t.string "name"
     t.boolean "admin", default: false, null: false
