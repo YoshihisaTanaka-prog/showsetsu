@@ -15,7 +15,7 @@ export default class Step {
                         });
                     });
                 },
-                afetrTappedFunc: tObj.setStepAction
+                afterTappedFunc: tObj.setStepAction
             });
         });
         $('.delete-step').on("click", function(){
@@ -29,7 +29,6 @@ export default class Step {
             }
         });
         $('.new-step').on("click", function(){
-            // tObj.loadHtmlCode({step: 0},function(){});
             console.log('clicked');
             tObj.createEdit({url: 'steps/new', mainId: 'body-main', formId: 'step-form',
                 afterLoadedFunc: function(){
@@ -41,12 +40,12 @@ export default class Step {
                         });
                     });
                 },
-                afetrTappedFunc: tObj.setStepAction
+                afterTappedFunc: tObj.setStepAction
             });
         });
         if (tObj.log.step > 0){
             console.log('updated for edit');
-            tObj.createEdit({url: 'steps/' + tObj.log.step + '/edit', mainId: 'body-main', formId: 'step-form',
+            tObj.updatedForm({key: 'body-main', formId: 'step-form',
                 afterLoadedFunc: function(){
                     $('#body-main').append('<br><br><a class="step-back">戻る</a>');
                     $('.step-back').on('click', function(){
@@ -56,7 +55,7 @@ export default class Step {
                         });
                     });
                 },
-                afetrTappedFunc: tObj.setStepAction
+                afterTappedFunc: tObj.setStepAction
             });
         }
     }

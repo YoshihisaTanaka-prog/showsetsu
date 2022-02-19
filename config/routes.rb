@@ -23,13 +23,14 @@ Rails.application.routes.draw do
   end
 
   post 'fetch-work-session', to: 'tops#fetch_work_session'
-  post '/tops', to: 'tops#index'
+  post 'tops', to: 'tops#index'
+  post 'header', to: 'tops#header'
   root 'tops#index'
 
   get 'no-page', to: 'tops#nopage'
-  get '*unmatched_route', to: 'tops#unmatched'
-  post '*unmatched_route', to: 'tops#unmatched'
-  patch '*unmatched_route', to: 'tops#unmatched'
-  delete '*unmatched_route', to: 'tops#unmatched'
+  # get '*unmatched_route', to: 'tops#unmatched'
+  # post '*unmatched_route', to: 'tops#unmatched'
+  # patch '*unmatched_route', to: 'tops#unmatched'
+  # delete '*unmatched_route', to: 'tops#unmatched'
 
 end

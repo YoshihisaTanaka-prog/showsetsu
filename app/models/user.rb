@@ -20,22 +20,6 @@ class User < ApplicationRecord
     end
   end
 
-  def set_token
-    # new_token = ''
-    # for i in 0..254
-    #   r = rand 61
-    #  if r < 10
-    #   new_token = new_token + r.to_s
-    #  elsif r < 36
-    #   new_token = new_token + (r + 55).chr
-    #  else
-    #   new_token = new_token + (r + 61).chr
-    #  end
-    # end
-    # self.token = new_token
-    self.save
-  end
-
   def session_hash
     return {title: self.title, chapter: self.chapter, story: self.story, synopsis: self.synopsis, character: self.character, design: self.design, step: self.step, mode: 'edit'}
   end

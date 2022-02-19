@@ -23,8 +23,8 @@ tObj = function(...args){
             };
         }
     }
-    tObj.log = {};
-    tObj.log.sessionKeyArray = {};
+    tObj.session = {};
+    tObj.sessionKeyArray = {};
 }
 tObj(Main, Chapter, Character, Step, Story, Synopsis, Title);
 

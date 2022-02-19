@@ -17,29 +17,6 @@ class ApplicationController < ActionController::Base
     def after_sign_out_path_for(resource)
         new_user_session_path # ログアウト後に遷移するpathを設定
     end
-    
-    def set_new_token session_id
-        new_token = ''
-        for i in 0..254
-          r = rand 61
-         if r < 10
-          new_token = new_token + r.to_s
-         elsif r < 36
-          new_token = new_token + (r + 55).chr
-         else
-          new_token = new_token + (r + 61).chr
-         end
-        end
-        st = Sessiontoken.find_by(session_id: session_id)
-        if se.blank?
-            st = Sessiontoken.new
-            st.token = new_token
-            st.save
-        else
-            st.token = new_token
-            st.save
-        end
-    end
 
     def edit_code(upk_list)
         require "net/http"
@@ -48,12 +25,18 @@ class ApplicationController < ActionController::Base
         upk_list.each do |upk|
             uri = URI.parse(root_url + upk[:uri])
             if upk[:uri].include?('/delete')
-                parameters = upk[:params].merge({user_id: current_user.id, _method: 'DELETE'})
+                if @st.present?
+                    parameters = upk[:params].merge({user_id: current_user.id, _method: 'DELETE', session_id: @st.session_id, token: @st.token})
+                else
+                    parameters = upk[:params].merge({user_id: current_user.id, _method: 'DELETE'}) 
+                end
             else
-                parameters = upk[:params].merge({user_id: current_user.id})
+                if @st.present?
+                    parameters = upk[:params].merge({user_id: current_user.id, session_id: @st.session_id, token: @st.token})
+                else
+                    parameters = upk[:params].merge({user_id: current_user.id}) 
+                end
             end
-            # parameters = upk[:params].merge({session_id: session[:session_id], authentication_token: params[:token]})
-            # logger.debug parameters
             res = Net::HTTP.post_form(uri, parameters)
             if res.code == '200'
                 logger.debug res.body

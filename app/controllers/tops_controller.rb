@@ -4,6 +4,7 @@ class TopsController < ApplicationController
 
   # get method of index
   def main_method
+    @st = get_session
     gon.session_keys = @loop_session_keys + @non_loop_session_keys
     if user_signed_in?
       current_user.set_token
@@ -98,6 +99,9 @@ class TopsController < ApplicationController
     redirect_to no_page_path
   end
 
+  def header    
+  end
+
   private
 
   def session_hash
@@ -111,6 +115,31 @@ class TopsController < ApplicationController
   def set_session_keys
     @loop_session_keys = ['title','chapter','story','synopsis','character']
     @non_loop_session_keys = ['design', 'step', 'mode']
+  end
+
+  def get_session
+    if user_signed_in?
+      st = SessionToken.find_by(user_id: current_user.id)
+      if st.present?
+        st.session_id = session[:session_id]
+        st.set_token
+      else
+        st = SessionToken.new
+        st.user_id = current_user.id
+        st.session_id = session[:session_id]
+        st.set_token
+      end
+    else
+      st = SessionToken.find_by(session_id: session[:session_id])
+      if st.present?
+        st.set_token
+      else
+        st = SessionToken.new
+        st.session_id = session[:session_id]
+        st.set_token
+      end
+    end
+    return st
   end
 
   def get_next_url_list

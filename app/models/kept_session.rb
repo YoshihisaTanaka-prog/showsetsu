@@ -1,0 +1,2 @@
+class KeptSession < ApplicationRecord
+end
