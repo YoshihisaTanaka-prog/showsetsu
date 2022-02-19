@@ -22,7 +22,7 @@ Rails.application.routes.draw do
     post 'sort-' + model + '/:iid/:jid', to: models + '#sort',    as: 'sort_' + model
   end
 
-  post 'fetch-work-session', to: 'tops#fetch_work_session'
+  # post 'fetch-work-session', to: 'tops#fetch_work_session'
   post 'tops', to: 'tops#index'
   post 'header', to: 'tops#header'
   root 'tops#index'

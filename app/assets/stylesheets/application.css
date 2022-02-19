@@ -49,6 +49,7 @@ footer p{
     width: 100%;
     text-align: right;
     padding-right: 10px;
+    border-right: #000 1px solid;
 }
 #header-ul li{
     float: left;

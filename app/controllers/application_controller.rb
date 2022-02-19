@@ -18,21 +18,55 @@ class ApplicationController < ActionController::Base
         new_user_session_path # ログアウト後に遷移するpathを設定
     end
 
+    def get_session
+      if user_signed_in?
+        st = SessionToken.find_by(user_id: current_user.id)
+      else
+        st = SessionToken.find_by(session_id: session[:session_id], is_enabled: true)
+      end
+  
+      if st.present?
+        st.session_id = session[:session_id] if user_signed_in?
+        st.set_token
+      else
+        st = SessionToken.find_by(is_enabled: false)
+        if st.present?
+          st.is_enabled = true
+        else
+          st = SessionToken.new
+        end
+        st.user_id = current_user.id if user_signed_in?
+        st.session_id = session[:session_id]
+        ks = KeptSession.find_by(is_enabled: false)
+        if ks.present?
+            ks.is_enabled = true
+        else
+            ks = KeptSession.new
+        end
+        ks.st_id = st.id
+        ks.save
+        st.current_ks_id = ks.id
+        st.set_token
+      end
+      return st
+    end
+
     def edit_code(upk_list)
+        st = get_session
         require "net/http"
         order = []
         code_hash = {}
         upk_list.each do |upk|
             uri = URI.parse(root_url + upk[:uri])
             if upk[:uri].include?('/delete')
-                if @st.present?
-                    parameters = upk[:params].merge({user_id: current_user.id, _method: 'DELETE', session_id: @st.session_id, token: @st.token})
+                if st.present?
+                    parameters = upk[:params].merge({user_id: current_user.id, _method: 'DELETE', session_id: st.session_id, token: st.token})
                 else
                     parameters = upk[:params].merge({user_id: current_user.id, _method: 'DELETE'}) 
                 end
             else
-                if @st.present?
-                    parameters = upk[:params].merge({user_id: current_user.id, session_id: @st.session_id, token: @st.token})
+                if st.present?
+                    parameters = upk[:params].merge({user_id: current_user.id, session_id: st.session_id, token: st.token})
                 else
                     parameters = upk[:params].merge({user_id: current_user.id}) 
                 end
