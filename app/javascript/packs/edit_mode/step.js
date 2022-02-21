@@ -43,7 +43,7 @@ export default class Step {
                 afterTappedFunc: tObj.setStepAction
             });
         });
-        if (tObj.log.step > 0){
+        if (tObj.session.step > 0){
             console.log('updated for edit');
             tObj.updatedForm({key: 'body-main', formId: 'step-form',
                 afterLoadedFunc: function(){

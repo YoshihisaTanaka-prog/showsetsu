@@ -16,12 +16,14 @@ class StepsController < ApplicationController
   # GET /steps/new
   def new
     @step = Step.new
+    st = get_session
+    st.set_log ({step: 0})
   end
 
   # GET /steps/1/edit
   def edit
-    @user.step = params[:id]
-    @user.save
+    st = get_session
+    st.set_log ({step: params[:id]})
   end
 
   # POST /steps or /steps.json
@@ -30,6 +32,8 @@ class StepsController < ApplicationController
     step = Step.new(step_params)
     step.user_id = params[:user_id]
     step.save_new_order
+    st = get_session
+    st.set_log ({step: -1})
     index
     render action: 'index'
   end
@@ -37,9 +41,9 @@ class StepsController < ApplicationController
   # PATCH/PUT /steps/1 or /steps/1.json
   def update
     if @step.update(step_params)
+      st = get_session
+      st.set_log ({step: -1})
       index
-      @user.step = -1
-      @user.save
       render action: 'index'
     end
   end
@@ -47,6 +51,8 @@ class StepsController < ApplicationController
   # DELETE /steps/1 or /steps/1.json
   def destroy
     @step.destroy
+    st = get_session
+    st.set_log ({step: -1})
     index
     render action: 'index'
   end

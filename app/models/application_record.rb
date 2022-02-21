@@ -1,6 +1,11 @@
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
+  def set_session_keys
+    @loop_session_keys = ['title_id','chapter_id','story_id','synopsis_id','character_id']
+    @non_loop_session_keys = ['design_id', 'step_id', 'mode_id']
+  end
+
   def save_new_order
     self.save
     self.order = self.id

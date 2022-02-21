@@ -1,8 +1,5 @@
 class SessionToken < ApplicationRecord
 
-    loop_session_keys = ['title','chapter','story','synopsis','character']
-    non_loop_session_keys = ['design', 'step', 'mode']
-
     def remove_session
         kept_sessions = KeptSession.where(st_id: self.id)
         kept_sessions.each do |kept_session|
@@ -52,7 +49,7 @@ class SessionToken < ApplicationRecord
     def session_hash
         c_log = KeptSession.find_by(id: self.current_ks_id)
         ret = c_log.session_hash
-        ret['design'] = self.design
+        ret['design_id'] = self.design
         return ret
     end
 
@@ -94,7 +91,7 @@ class SessionToken < ApplicationRecord
         self.current_ks_id = self.after_log.id if self.after_log.present?
     end
 
-    def set_log(save_hash, mode)
+    def set_log save_hash
         if self.after_log.present?
             ks = self.after_log
         else
@@ -102,66 +99,65 @@ class SessionToken < ApplicationRecord
             if ks.present?
                 ks.is_enabled = true
                 ks.st_id = self.id
+                ks.save
             else
                 ks = KeptSession.new
                 ks.st_id = self.id
+                ks.save
             end
         end
-        if save_hash.present?
-            save_hash.each do |key, value|
-                ks[key] = value
-            end
-            ks.mode = self.current_log.mode
-        else
-            KeptSession.column_names.each do |column|
-                unless ["created_at", "updated_at"].include?(column)
-                    ks[column] = self.current_log[column]
+        KeptSession.column_names.each do |column|
+            unless ["created_at", "updated_at", 'id', 'st_id', 'is_enabled'].include?(column)
+                if save_hash.keys.include?(column)
+                    ks[column] = save_hash[column]
+                else
+                    ks[column] = self.current_log[column] 
                 end
             end
-            ks.mode = mode
         end
         ks.save
         self.current_ks_id = ks.id
         self.save
     end
 
-    def change_mode mode
-        cks = self.current_log
-        self.set_log({}, mode)
-    end
-
     def get_next_url_list params
         # 送られてきたパラムのバリデーション
-        loop_session_keys = Grobal::loop_session_keys
+        set_session_keys
         if params[:before].present?
             self.go_before
         elsif params[:after].present?
             self.go_after
         elsif params[:mode].present?
-            self.change_mode params[:mode]
-        elsif params[:step].present? || params[:title].blank?
-            sent_hash = {step: params[:step]}
+            self.set_log ({mode: params[:mode]})
+        elsif params[:uri].present?
+            dummy = nil
+        elsif params[:step_id].present? || params[:title_id].blank?
+            if params[:step_id].present?
+                sent_hash = {step: params[:step_id]} 
+            else
+                sent_hash = {step: -1}
+            end
             KeptSession.column_names.each do |column|
-                unless ["created_at", "updated_at", 'step'].include?(column)
+                unless ["created_at", "updated_at", 'step', 'id', 'st_id', 'is_enabled'].include?(column)
                     sent_hash[column] = self.current_log[column]
                 end
             end
             self.set_log sent_hash
         else
-            sent_hash = {step: nil, title: params[:title]}
-            if params[:chapter].blank?
-                for i in 1..(loop_session_keys.length - 1)
-                    sent_hash[loop_session_keys[i]] = nil
+            sent_hash = {step: nil, title: params[:title_id]}
+            if params[:chapter_id].blank?
+                for i in 1..(@loop_session_keys.length - 1)
+                    sent_hash[@loop_session_keys[i]] = nil
                 end
             else
-                sent_hash['chapter'] = params[:chapter]
-                if (params[:story].present? && params[:synopsis].present?) || (params[:synopsis].present? && params[:character].present?) || (params[:character].present? && params[:story].present?)
-                    for i in 2..(loop_session_keys.length - 1)
-                        sent_hash[loop_session_keys[i]] = nil
+                sent_hash['chapter'] = params[:chapter_id]
+                if (params[:story_id].present? && params[:synopsis_id].present?) || (params[:synopsis_id].present? && params[:character_id].present?) || (params[:character_id].present? && params[:story_id].present?)
+                    for i in 2..(@loop_session_keys.length - 1)
+                        sent_hash[@loop_session_keys[i]] = nil
                     end
                 else
-                    for i in 2..(loop_session_keys.length - 1)
-                        sent_hash[loop_session_keys[i]] = params[loop_session_keys[i]]
+                    for i in 2..(@loop_session_keys.length - 1)
+                        sent_hash[@loop_session_keys[i]] = params[@loop_session_keys[i]]
                     end
                 end
             end
@@ -188,14 +184,14 @@ class SessionToken < ApplicationRecord
               main_parameter[model_name + '[' + (string_parameter_list[num-2]) + ']'] = string_parameter_list[num]
               num = num + 4
             end
-           if current_log[params[:uri]].nil?
-            return [{uri: params[:uri].pluralize, params: main_parameter, key: params[:key]}]
-           elsif current_log[params[:uri]] < 1
-            return [{uri: params[:uri].pluralize, params: main_parameter, key: params[:key]}]
-           else
-            main_parameter['_method'] = 'PATCH'
-            return [{uri: params[:uri].pluralize + '/' + current_log[params[:uri]].to_s + '/update', params: main_parameter, key: params[:key]}]
-           end
+            if current_log[params[:uri]].nil?
+                return [{uri: params[:uri].pluralize, params: main_parameter, key: params[:key]}]
+            elsif current_log[params[:uri]] < 1
+                return [{uri: params[:uri].pluralize, params: main_parameter, key: params[:key]}]
+            else
+                main_parameter['_method'] = 'PATCH'
+                return [{uri: params[:uri].pluralize + '/' + current_log[params[:uri]].to_s + '/update', params: main_parameter, key: params[:key]}]
+            end
           end
         elsif current_log[:step].present?
           if current_log[:step] == -1

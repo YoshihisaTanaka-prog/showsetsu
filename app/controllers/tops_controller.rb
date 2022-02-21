@@ -6,15 +6,14 @@ class TopsController < ApplicationController
   def main_method
     # logger.debug current_user
     st = get_session
-    gon.session_keys = Grobal::loop_session_keys + Grobal::non_loop_session_keys
+    gon.session_keys = @loop_session_keys + @non_loop_session_keys
     if user_signed_in?
-      current_user.set_token
       if current_user.initial_step.blank?
         @mode = 'set_step'
       else
         @mode = 'edit'
       end
-      gon.session_info = current_user.session_hash
+      gon.session_info = st.session_hash
       if current_user.admin
         respond_to do |format|
           format.html
@@ -24,16 +23,17 @@ class TopsController < ApplicationController
         end
       end
     else
-      gon.session_info = session_hash
-      @mode = 'watch'
+      gon.session_info = st.session_hash
+      @mode = 'show'
     end
   end
 
   # post method of index
   def sub_method
-    upk_list = get_session.get_next_url_list
-    ret = edit_code(get_next_url_list)
-    ret['session'] = get_session.session_hash
+    upk_list = get_session.get_next_url_list params
+    ret = edit_code(upk_list)
+    session_token = SessionToken.find_by(session_id: session[:session_id])
+    ret['session'] = session_token.session_hash
     render json: ret.to_json
   end
 
@@ -64,11 +64,6 @@ class TopsController < ApplicationController
       ret[key] = nil
     end
     return ret
-  end
-
-  def set_session_keys
-    @loop_session_keys = ['title','chapter','story','synopsis','character']
-    @non_loop_session_keys = ['design', 'step', 'mode']
   end
 
 end

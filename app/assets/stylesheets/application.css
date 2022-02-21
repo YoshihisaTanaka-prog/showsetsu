@@ -46,13 +46,13 @@ footer p{
 }
 
 #header-ul {
-    width: 100%;
+    /* width: 100%; */
     text-align: right;
-    padding-right: 10px;
+    margin-right: 10px;
     border-right: #000 1px solid;
 }
 #header-ul li{
-    float: left;
+    display: inline;
     list-style: none;
     padding: 0 10px;
     border-left: #000 1px solid;

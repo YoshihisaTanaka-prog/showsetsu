@@ -22,9 +22,14 @@ export default class Main {
     }
 
     initialFetchSession(sessionInfo){
-        tObj.sessionKeyArray = sessionInfo.session_keys
-        tObj.setSessionInfo(sessionInfo.session_info)
-        tObj.loadHtmlCode({});
+        tObj.sessionKeyArray = sessionInfo.session_keys;
+        tObj.setSessionInfo(sessionInfo.session_info);
+        console.log(tObj.session);
+        if (tObj.session.step_id != null) {
+            tObj.loadHtmlCode({afterFunc: tObj.setStepAction});   
+        } else if (tObj.session.story_id != null) {
+            tObj.loadHtmlCode({});
+        }
     }
 
     mixObject(...args){
@@ -36,11 +41,12 @@ export default class Main {
     }
 
     loadHtmlCode({params: params = {}, sessionInfo: sessionInfo = {}, afterFunc: afterFunc = function(){}}){
-        tObj.setSession(sessionInfo);
-        $.post('/tops.json', tObj.mixObject(data1, params, tObj.session), function(data2){
+        tObj.setSessionInfo(sessionInfo);
+        $.post('/tops.json', tObj.mixObject(params, tObj.session), function(data2){
             const order = data2.order;
             const code = data2.code;
             const session = data2.session;
+            console.log(session);
             tObj.setSessionInfo(session);
             console.log(code);
             for (var key of order){
@@ -53,8 +59,7 @@ export default class Main {
     createEdit({url: url, afterLoadedFunc: afterLoadedFunc = function(){}, afterTappedFunc: afterTappedFunc = function(){}, mainId: mainId = 'main', formId: formId, sessionInfo: sessionInfo = {}}) {
         tObj.loadHtmlCode({params: {uri: url, key: mainId}, sessionInfo: sessionInfo,
             afterFunc: function () {
-                tObj.updateForm({key: mainId, formId: formId, afterTappedFunc: afterTappedFunc});
-                afterLoadedFunc();
+                tObj.updateForm({key: mainId, formId: formId, afterTappedFunc: afterTappedFunc, afterLoadedFunc: afterLoadedFunc});
             }
         });
     }

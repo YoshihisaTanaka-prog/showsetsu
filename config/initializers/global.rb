@@ -1,14 +1,18 @@
-module Grobal
-    loop_session_keys = [
-        'title',
-        'chapter',
-        'story',
-        'character',
-        'synopsis',
-    ].freeze
+class Grobal
+    def loop_session_keys
+        return [
+            'title',
+            'chapter',
+            'story',
+            'character',
+            'synopsis',
+        ]
+    end
     
-    non_loop_session_keys = [
-        'design',
-        'step',
-    ].freeze
+    def non_loop_session_keys 
+        return [
+            'design',
+            'step',
+        ]
+    end
 end

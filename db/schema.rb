@@ -78,13 +78,6 @@ ActiveRecord::Schema.define(version: 2022_02_18_052123) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "sessiontokens", force: :cascade do |t|
-    t.string "session_id"
-    t.string "token"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
   create_table "steps", force: :cascade do |t|
     t.string "name"
     t.integer "user_id"
@@ -125,14 +118,6 @@ ActiveRecord::Schema.define(version: 2022_02_18_052123) do
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer "title"
-    t.integer "chapter"
-    t.integer "story"
-    t.integer "synopsis"
-    t.integer "character"
-    t.integer "design"
-    t.integer "step"
-    t.string "token"
     t.string "name"
     t.boolean "admin", default: false, null: false
     t.datetime "created_at", precision: 6, null: false

@@ -2,6 +2,11 @@ class ApplicationController < ActionController::Base
     before_action :write_request_info
     protect_from_forgery except: [:index, :show, :new, :edit]
 
+    def set_session_keys
+      @loop_session_keys = ['title_id','chapter_id','story_id','synopsis_id','character_id']
+      @non_loop_session_keys = ['design_id', 'step_id', 'mode_id']
+    end
+
     def write_request_info
         logger.debug "\n=======================================\n"
         logger.debug "url >> " + request.original_url.to_s
